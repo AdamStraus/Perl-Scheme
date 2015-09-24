@@ -1,0 +1,10 @@
+(define (thirdElement lis)
+  (COND
+   ((null? (CAR lis)) 0)
+   ((null? (CAR (CDR lis))) 0)
+   (ELSE (CAR (CDR (CDR lis))))
+   )
+  )
+   
+(thirdElement '(a b c d))
+   

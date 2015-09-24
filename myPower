@@ -1,0 +1,8 @@
+(define (myPower num exp)
+  (if (= exp 0)
+      1
+      (* num (myPower num (- exp 1)))
+      )
+  )
+
+(myPower 2 10)

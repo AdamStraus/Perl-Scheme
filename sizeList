@@ -1,0 +1,8 @@
+(define (sizeList lis)
+  (if (null? lis)
+      0
+      (+ 1 (sizeList(CDR lis)))
+      )
+  )
+
+(sizeList '(a b c d))

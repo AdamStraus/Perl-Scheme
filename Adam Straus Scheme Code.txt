@@ -1,0 +1,267 @@
+(define (absall1 lis)
+ (if (null? lis)
+     lis
+     (CONS (abs (CAR lis)) (absall1 (CDR lis)))
+     )
+  )
+
+;(absall1 '(-1 -3 5 8 -2))
+
+(define (absall2 lis)
+  (map abs lis)
+  )
+  
+;(absall2 '(-4 -3 5 -1 4))
+
+(define (multiinsertL num1 num2 lis)
+       (COND
+        ((null? lis) lis)
+        ((eq? num2 (CAR lis)) (cons num1 (cons num2 (multiinsertL num1 num2 (CDR lis)))))
+        (ELSE (cons (CAR lis) (multiinsertL num1 num2 (CDR lis))))
+        )
+  )
+;(multiinsertL 'a 'b '(b c b z b))
+
+
+(define (removeAllDeep num lis)
+  (COND
+   ((null? lis) lis)
+   ((list? (CAR lis)) (CONS (removeAllDeep num (CAR lis)) (removeAllDeep num (CDR lis))))
+   ((= num (CAR lis)) (removeAllDeep num (CDR lis)))
+   (ELSE (cons (CAR lis) (removeAllDeep num (CDR lis))))
+   )
+  )
+;(removeAllDeep -1 '((-1 -1 -1) -5 (-1 3) (((-1)8)) -1 -4 5)) ;doesn't get the second -1
+
+(define (make-list-from-input)
+  (let ((inp (read)))
+    (if (eq? inp 'q)
+     '()
+     (CONS inp (make-list-from-input)))
+  ) 
+)
+
+;(define inputlis (make-list-from-input))
+;(display inputlis)
+
+(define (create-dotted-pairsA) ;enter q for the last two entries when you want to stop entering list values
+  (let ((inp1 (read)) (inp2 (read)))
+    (if (OR (eq? inp1 'q) (eq? inp2 'q))
+     '()
+  (CONS (cons inp1 inp2) (create-dotted-pairsA))
+  )
+  )
+  )
+
+;(define dotList (create-dotted-pairsA)) 
+;(display dotList)
+
+(define (searchPairs lis)
+  (let ((searchVal (read)))
+  (if (eq? #f (assoc searchVal lis))
+      '()
+   (CDR(assv searchVal lis))
+  )
+  )
+  )
+
+;(searchPairs '((a b)(c d)(e f)(g h)))
+  
+
+(define (enterAndSearch) ;one of your last two input values must be q.  After the last two list values, you enter your search key
+   (let ((dotList (create-dotted-pairsA)))
+     (searchPairs dotList)
+    )
+  )
+
+;(enterAndSearch)
+
+(define (last lis . optparam)
+  (if (null? optparam)
+      (if (null? (cdr lis))
+          (car lis)
+          (last (cdr lis))
+          )
+      (let ((len (length lis)) (numVals (car optparam)))
+        (if (= len numVals)
+            lis
+            (last (cdr lis) numVals)
+            )
+        )
+      )
+  )
+
+;(last '(a b c d) 3)
+;(last '(a b c d) 0)
+;(last '(a b c d) )
+
+
+(define (fun3 lis1 lis2)
+  (cond
+    ((null? lis1) lis2)
+    ((null? lis2) lis1)
+    (else
+      (cons (+ (car lis1)(car lis2)) (fun3 (cdr lis1)(cdr lis2)))
+    )
+  )
+  )
+
+
+;(fun3 '(4 5 6) '(7 8 9 55 67))
+
+
+;Number 8 in the set is what I would call floor division, or division with no remainder. 
+;It divides n by m and tells you how many times m goes into n but gives no remainder
+;so (func 10 5) would equal 2 but (func 12 5) would also equal 2
+
+
+;Number 9 
+;(cdr (car (cdr (car (cdr (cdr (cdr '((a b c (q r s)) (t t) (d e f) (g (h i) j) (y z)))))))))
+
+
+(define (odd-list val) ;I can't figure out how to get the decimal places out of my result.  Oh well
+  (cond
+    ((null? val) '()) 
+    ((> 1 val) '())
+    ((= val 1) '())
+    ((= val 0) '())
+    
+    ((AND (odd? (floor val)) (> val (floor val))) (append (odd-list (- val 2)) (list (floor val)))) ;if the number is 5.5 (odd and larger than its floor, perform the function on 3.3 and append 5 to the end of the list
+    
+    ((AND (odd? (floor val)) (= val (floor val))) (append (odd-list (- val 3.9)) (list (- val 2)))) ;I do -3.9 to avoid ever getting to 1. If I got to 1, then the function wouldn't print 1
+    
+    ((AND (even? (floor val)) (> val (floor val))) (append (odd-list (- val 2)) (list (- (floor val) 1)))) ;if the number is 6.6 (even and greater than its floor), perform the function on 4.4 and append 5 to the list
+    (else
+     (append (odd-list(- val 2.9)) (list (- val 1))) ;the 2.9 here again avoid getting to 1. It makes sure you recurse on the 1st or 3rd condition
+     )
+    )
+  )
+
+;(odd-list 6.6)
+;(odd-list 7.7)
+;(odd-list 10)
+;(odd-list 11)
+
+
+(define cardvalues '((ace . 1)(two . 2)(three . 3)(four . 4)(five . 5)(six . 6)(seve .n 7)(eight . 8)(nine . 9)(ten . 10)(jack . 10)(queen . 10)(king . 10)))
+;Aces are always counted as 1.  If adding 1 (aka making an ace count as 11) won't make the player bust, then the hand will have 10 added to it
+(define (checkAce lis) ;This function checks to see if there is an ace in a given hand.  If so, it returns 1, else returns 0
+  (cond
+    ((null? lis) 0)
+    ((eq? (car lis) 'ace) 1)
+    (else 
+     (checkAce (cdr lis)))
+  )
+    
+  )
+
+(define (sumHand lis)  ;this is the function I use to determine the raw sum of the card hand
+  (cond
+    ((null? lis) 0)
+    (else 
+     (+ (cdr (assoc (car lis) cardvalues)) (sumHand (cdr lis)))
+     )
+    )
+  )
+
+
+
+(define (blackJack1 lis) ;This is the function used in number 12.  It finds the sum then sees if there is an ace in the hand
+  (let ((sum (sumHand lis)))
+    (if (AND (< sum 12) (= (checkAce lis) 1)) ;if there's an ace in the hand and the hand value is 11 or lower, then we add 10
+        (+ sum 10)
+        sum
+        )
+    )
+  )
+
+;(blackJack1 '(ace ace jack queen))
+
+(define (blackJack2)  ;this is the function used in problem 13
+  (display "enter a blackjack hand:\n")
+  (let ((card1 (read)) (card2 (read)) (card3 (read)))
+    (cond                                ;player has 3 options, enter stay, q, or another card
+      ((eq? card3 'stay) (display (blackJack1 (cons card1 (cons card2 '())))) (display "\n") (cons card1 (cons card2 '())))
+      ((eq? card3 'q) (askCard (cons card1 (cons card2 '()))))                    
+      ((> 21 (blackJack1 (cons card1 (cons card2 (cons card3 '()))))) (askCard (cons card1 (cons card2 (cons card3 '())))))
+      (else (display "You entered something wrong!! Try again!"))
+    )
+  )
+  )
+
+(define (askCard lis) ;I use this function to take in any extra card inputs for blackJack2
+  (display (blackJack1 lis))
+  (display "\n")
+  (display lis)
+  (display "\n")
+  (cond
+    ((> (blackJack1 lis) 21) (display "bust\n")) ;if you bust, no more cards
+    (else
+     
+  (display "enter a card or stay to quit\n")
+  (let ((value (read)))
+  (if (eq? value 'stay)
+      (blackJack1 lis)
+      (askCard (append lis (list value)))
+      )
+    )
+  )
+  )
+  )
+
+(blackJack2)
+               
+(define (blackJackFinal) ;this is the function for problem 14
+  (display "enter a blackjack hand:\n")
+  (let ((card1 (read)) (card2 (read)))
+    (askCard2 (cons card1 (cons card2 '())))
+    )
+  )
+    
+(define (askCard2 lis)  ;I used this function to take in any additional cards for blackJackFinal
+  (display (blackJack1 lis))
+  (display "\n")
+  (display lis)
+  (display "\n")
+  (cond
+    ((< (blackJack1 lis) 17) (display "It is suggested that you HIT\n") (let ((value (read))) ;lets them enter stay or enter a new card
+                                                                          (cond 
+                                                                            ((eq? value 'stay) (display (blackJack1 lis))
+                                                                                               (display "\n")
+                                                                                               (display lis)
+                                                                                               (display "\n")
+                                                                                               )
+                                                                            (else
+                                                                          (askCard2 (append lis (list value)))
+                                                                          )
+                                                                          )
+                                                                          )                                                                
+                                                                          
+                             )
+    ((AND (> (blackJack1 lis) 16) (> 22 (blackJack1 lis)))   (display "It is suggested that you STAY\n")    ;lets them enter stay or a new card                      
+                                                                         (let ((value (read)))
+                                                                          (cond 
+                                                                            ((eq? value 'stay) (display (blackJack1 lis))
+                                                                                               (display "\n")
+                                                                                               (display lis)
+                                                                                               (display "\n")
+                                                                                               )
+                                                                            (else
+                                                                          (askCard2 (append lis (list value)))
+                                                                          )
+                                                                          )
+                                                                          )
+     )
+    (else
+     (display "bust\n") ;if they have over 21, they've lost
+    )
+  )
+  )
+;(blackJackFinal)
+
+    
+   
+      
+
+
+ 

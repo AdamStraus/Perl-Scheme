@@ -1,0 +1,9 @@
+(define (sumUpTo n)
+     (if (= n 1)
+         1
+         (+ n (sumUpTo (- n 1)))
+     )
+)
+
+
+(sumUpTo 10)
